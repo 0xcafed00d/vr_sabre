@@ -30,8 +30,17 @@ function lovr.load()
 	
 	  lovr.graphics.setBackgroundColor(.05, .05, .05)
 
-	  world = lovr.physics.newWorld(0,0,0)
-	  world:newBoxCollider(0, 0, 0, 50, .05, 50):setKinematic(true)
+	  world = lovr.physics.newWorld(0,-1,0)
+	  world:newBoxCollider(0, -2.5, 0, 5, 5, 5):setKinematic(true) -- floor
+	  world:newBoxCollider(0, 7.5, 0, 5, 5, 5):setKinematic(true) -- roof
+
+	  world:newBoxCollider( 5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- right wall
+	  world:newBoxCollider(-5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- left wall
+	  world:newBoxCollider( 0, 2.5, 5, 5, 5, 5):setKinematic(true)  -- back wall
+	  world:newBoxCollider( 0, 2.5,-5, 5, 5, 5):setKinematic(true)  -- front wall
+
+	  sphere = world:newSphereCollider(0, 2, 0, 0.10)
+	  sphere:setRestitution(1)
 end
 
 function lovr.update(dt)
@@ -66,10 +75,34 @@ function lovr.draw()
 	for i, hand in ipairs(lovr.headset.getHands()) do
 		local pos = mat4(lovr.headset.getPose(hand))
 		draw_sabre(pos, saber_colours[i])
-  	end
+	end
+
+	lovr.graphics.setColor(0x00ffff)	
+	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
+
 
 	-- draw room bounding box -- 
 	lovr.graphics.setColor(0xffffff)	
 	lovr.graphics.cube("fill", 0, 0, 0, 0.05, 0, 0, 1, 0)
+	lovr.graphics.setColor(0xff0000)	
+	lovr.graphics.cube("fill", 1, 0, 0, 0.05, 0, 0, 1, 0)
+	lovr.graphics.setColor(0x00ff00)	
+	lovr.graphics.cube("fill", 0, 1, 0, 0.05, 0, 0, 1, 0)
+	lovr.graphics.setColor(0x0000ff)	
+	lovr.graphics.cube("fill", 0, 0, 1, 0.05, 0, 0, 1, 0)
+	lovr.graphics.setColor(0xffffff)	
 	lovr.graphics.cube("line", 0, 2.51, 0, 5, 0, 0, 1, 0)
+
+	lovr.graphics.setColor(0xff0000)	
+
+	for i, collider in ipairs(world:getColliders()) do
+	    local x,y,z, angle, ax,ay,az = collider:getPose()
+		for _, shape in ipairs(collider:getShapes()) do
+			local shapeType = shape:getType()
+			if shapeType == 'box' then
+				local sx, sy, sz = shape:getDimensions()
+				lovr.graphics.box('line', x,y,z, sx,sy,sz, angle, ax,ay,az)
+			end
+		end
+	end
 end
