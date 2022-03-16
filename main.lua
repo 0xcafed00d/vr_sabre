@@ -1,6 +1,8 @@
 
 local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 
+
+
 function lovr.load()
 	
 	shader = lovr.graphics.newShader([[
@@ -53,7 +55,25 @@ function lovr.update(dt)
   	end
 end
 
+local draw_marker = function (pos_vec3, colour)	
+	lovr.graphics.setColor(colour)
+	lovr.graphics.sphere(pos_vec3, 0.02);
+end
+
 local draw_sabre = function (pos, colour)	
+	
+	local v1 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0))
+	local v2 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -1))
+	draw_marker(v1, 0xff00ff)
+	draw_marker(v2, 0xffff00)
+
+	world:raycast(v1, v2, 
+		function(shape, x, y, z, nx, ny, nz)
+			draw_marker(vec3(x, y, z), 0xff0000)
+		end
+	)
+
+
 	local m1 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -0.5)
 
 	lovr.graphics.setColor(colour)
@@ -64,6 +84,18 @@ local draw_sabre = function (pos, colour)
 	lovr.graphics.setColor(0x777777)
 	lovr.graphics.cylinder((pos*m2):scale(0.14), 0.015, 0.015, true)
 end
+
+local draw_axis = function (pos)
+	lovr.graphics.setColor(0xff0000)	
+	lovr.graphics.box("fill", 0.5, 0, 0, 1, 0.05, 0.05, 0, 0, 1, 0)
+	lovr.graphics.setColor(0x00ff00)	
+	lovr.graphics.box("fill", 0, 0.5, 0, 0.05, 1, 0.05, 0, 0, 1, 0)
+	lovr.graphics.setColor(0x0000ff)	
+	lovr.graphics.box("fill", 0, 0, 0.5, 0.05, 0.05, 1, 0, 0, 1, 0)
+	lovr.graphics.setColor(0xffffff)	
+	lovr.graphics.cube("fill", 0, 0, 0, 0.1, 0, 0, 1, 0)
+end	
+
 
 function lovr.draw()
 	-- draw floor grid -- 
@@ -80,16 +112,9 @@ function lovr.draw()
 	lovr.graphics.setColor(0x00ffff)	
 	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
 
+	draw_axis(vec3(0,0,0))
 
 	-- draw room bounding box -- 
-	lovr.graphics.setColor(0xffffff)	
-	lovr.graphics.cube("fill", 0, 0, 0, 0.05, 0, 0, 1, 0)
-	lovr.graphics.setColor(0xff0000)	
-	lovr.graphics.cube("fill", 1, 0, 0, 0.05, 0, 0, 1, 0)
-	lovr.graphics.setColor(0x00ff00)	
-	lovr.graphics.cube("fill", 0, 1, 0, 0.05, 0, 0, 1, 0)
-	lovr.graphics.setColor(0x0000ff)	
-	lovr.graphics.cube("fill", 0, 0, 1, 0.05, 0, 0, 1, 0)
 	lovr.graphics.setColor(0xffffff)	
 	lovr.graphics.cube("line", 0, 2.51, 0, 5, 0, 0, 1, 0)
 
