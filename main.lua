@@ -60,7 +60,7 @@ local draw_marker = function (pos_vec3, colour)
 	lovr.graphics.sphere(pos_vec3, 0.02);
 end
 
-local draw_sabre = function (pos, colour)	
+local draw_sabre = function (pos, colour, device)	
 	
 	local v1 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0))
 	local v2 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -1))
@@ -70,6 +70,8 @@ local draw_sabre = function (pos, colour)
 	world:raycast(v1, v2, 
 		function(shape, x, y, z, nx, ny, nz)
 			draw_marker(vec3(x, y, z), 0xff0000)
+			shape:getCollider():applyForce(-nx, -ny, -nz)
+			lovr.headset.vibrate(device, 1, 0.25, 0)
 		end
 	)
 
@@ -106,7 +108,7 @@ function lovr.draw()
 	-- draw sabres -- 
 	for i, hand in ipairs(lovr.headset.getHands()) do
 		local pos = mat4(lovr.headset.getPose(hand))
-		draw_sabre(pos, saber_colours[i])
+		draw_sabre(pos, saber_colours[i], hand)
 	end
 
 	lovr.graphics.setColor(0x00ffff)	
