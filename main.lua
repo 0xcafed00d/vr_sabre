@@ -34,8 +34,19 @@ function lovr.load()
 	  ]], { flags = { highp = true } })
 	
 	  shader2 = lovr.graphics.newShader('standard', {
-		flags = { animated = true }
-	  })
+		flags = {
+			normalMap = false,
+			indirectLighting = true,
+			occlusion = true,
+			emissive = true,
+			skipTonemap = false
+		  }	  
+		})
+
+	  shader2:send('lovrLightDirection', { -1, -1, -1 })
+	  shader2:send('lovrLightColor', { .9, .9, .8, 1.0 })
+	  shader2:send('lovrExposure', 10)
+	
 
 	  lovr.graphics.setBackgroundColor(.05, .05, .05)
 
@@ -48,10 +59,12 @@ function lovr.load()
 	  world:newBoxCollider( 0, 2.5, 5, 5, 5, 5):setKinematic(true)  -- back wall
 	  world:newBoxCollider( 0, 2.5,-5, 5, 5, 5):setKinematic(true)  -- front wall
 
-	  sphere = world:newSphereCollider(0, 2, 0, 0.10)
+	  sphere = world:newSphereCollider(0, 2, -2, 0.10)
 	  sphere:setRestitution(1)
 
 	  hilt = lovr.graphics.newModel("assets/hilt.glb")
+	  droid = lovr.graphics.newModel("assets/droid.glb")
+
 end
 
 function lovr.update(dt)
@@ -95,6 +108,7 @@ local draw_sabre = function (pos, colour, device)
 	lovr.graphics.setColor(0xffffff)
 	lovr.graphics.setShader(shader2)
 	hilt:draw(pos*m2:scale(0.04))
+
 	lovr.graphics.setShader()
 
 
@@ -126,8 +140,14 @@ function lovr.draw()
 		draw_sabre(pos, saber_colours[i], hand)
 	end
 
-	lovr.graphics.setColor(0x00ffff)	
-	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
+	--lovr.graphics.setColor(0x00ffff)	
+	--lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
+
+	lovr.graphics.setShader(shader2)
+	droid:draw(mat4(sphere:getPose()):scale(0.25))
+
+	lovr.graphics.setShader()
+
 
 	draw_axis(vec3(0,0,0))
 
