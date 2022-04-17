@@ -33,6 +33,10 @@ function lovr.load()
 		}
 	  ]], { flags = { highp = true } })
 	
+	  shader2 = lovr.graphics.newShader('standard', {
+		flags = { animated = true }
+	  })
+
 	  lovr.graphics.setBackgroundColor(.05, .05, .05)
 
 	  world = lovr.physics.newWorld(0,-1,0)
@@ -88,7 +92,10 @@ local draw_sabre = function (pos, colour, device)
 
 	local m2 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, -0.02, 0.15)
 
+	lovr.graphics.setColor(0xffffff)
+	lovr.graphics.setShader(shader2)
 	hilt:draw(pos*m2:scale(0.04))
+	lovr.graphics.setShader()
 
 
 --	lovr.graphics.setColor(0x777777)
