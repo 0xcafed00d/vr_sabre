@@ -1,7 +1,10 @@
 
 local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 
-
+local data = {
+	sabre_count = 0,
+	sabre_info = {},
+}
 
 function lovr.load()
 	
@@ -43,6 +46,8 @@ function lovr.load()
 
 	  sphere = world:newSphereCollider(0, 2, 0, 0.10)
 	  sphere:setRestitution(1)
+
+	  hilt = lovr.graphics.newModel("assets/hilt.glb")
 end
 
 function lovr.update(dt)
@@ -81,10 +86,13 @@ local draw_sabre = function (pos, colour, device)
 	lovr.graphics.setColor(colour)
 	lovr.graphics.cylinder(pos*m1, 0.01, 0.01, true)
 
-	local m2 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, 0.07)
+	local m2 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, -0.02, 0.15)
 
-	lovr.graphics.setColor(0x777777)
-	lovr.graphics.cylinder((pos*m2):scale(0.14), 0.015, 0.015, true)
+	hilt:draw(pos*m2:scale(0.04))
+
+
+--	lovr.graphics.setColor(0x777777)
+--	lovr.graphics.cylinder((pos*m2):scale(0.14), 0.015, 0.015, true)
 end
 
 local draw_axis = function (pos)
