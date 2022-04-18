@@ -1,3 +1,4 @@
+require "utils"
 
 local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 
@@ -144,6 +145,7 @@ function lovr.draw()
 	--lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
 
 	lovr.graphics.setShader(shader2)
+	lovr.graphics.setColor(0x909090)
 	droid:draw(mat4(sphere:getPose()):scale(0.25))
 
 	lovr.graphics.setShader()
