@@ -1,75 +1,41 @@
-require "utils"
+local utils = require "utils"
+local droid = require "droid"
+local shaders = require "shaders"
 
 local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 
 local data = {
-	sabre_count = 0,
-	sabre_info = {},
 }
 
 function lovr.load()
-	
-	shader = lovr.graphics.newShader([[
-		vec4 position(mat4 projection, mat4 transform, vec4 vertex) {
-		  return projection * transform * vertex;
-		}
-	]], 
-	[[
-		const float gridSize = 25.;
-		const float cellSize = .5;
-	
-		vec4 color(vec4 gcolor, sampler2D image, vec2 uv) {
-	
-		  // Distance-based alpha (1. at the middle, 0. at edges)
-		  float alpha = 1. - smoothstep(.15, .50, distance(uv, vec2(.5)));
-	
-		  // Grid coordinate
-		  uv *= gridSize;
-		  uv /= cellSize;
-		  vec2 c = abs(fract(uv - .5) - .5) / fwidth(uv);
-		  float line = clamp(1. - min(c.x, c.y), 0., 1.);
-		  vec3 value = mix(vec3(.01, .01, .011), (vec3(.04)), line);
-	
-		  return vec4(vec3(value), alpha);
-		}
-	  ]], { flags = { highp = true } })
-	
-	  shader2 = lovr.graphics.newShader('standard', {
-		flags = {
-			normalMap = false,
-			indirectLighting = true,
-			occlusion = true,
-			emissive = true,
-			skipTonemap = false
-		  }	  
-		})
 
-	  shader2:send('lovrLightDirection', { -1, -1, -1 })
-	  shader2:send('lovrLightColor', { .9, .9, .8, 1.0 })
-	  shader2:send('lovrExposure', 10)
-	
+	shaders.standard_shader:send('lovrLightDirection', { -1, -1, -1 })
+	shaders.standard_shader:send('lovrLightColor', { .9, .9, .8, 1.0 })
+	shaders.standard_shader:send('lovrExposure', 10)
 
-	  lovr.graphics.setBackgroundColor(.05, .05, .05)
+	lovr.graphics.setBackgroundColor(.05, .05, .05)
 
-	  world = lovr.physics.newWorld(0,-1,0)
-	  world:newBoxCollider(0, -2.5, 0, 5, 5, 5):setKinematic(true) -- floor
-	  world:newBoxCollider(0, 7.5, 0, 5, 5, 5):setKinematic(true) -- roof
+	world = lovr.physics.newWorld(0,-1,0)
+	world:newBoxCollider(0, -2.5, 0, 5, 5, 5):setKinematic(true) -- floor
+	world:newBoxCollider(0, 7.5, 0, 5, 5, 5):setKinematic(true) -- roof
 
-	  world:newBoxCollider( 5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- right wall
-	  world:newBoxCollider(-5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- left wall
-	  world:newBoxCollider( 0, 2.5, 5, 5, 5, 5):setKinematic(true)  -- back wall
-	  world:newBoxCollider( 0, 2.5,-5, 5, 5, 5):setKinematic(true)  -- front wall
+	world:newBoxCollider( 5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- right wall
+	world:newBoxCollider(-5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- left wall
+	world:newBoxCollider( 0, 2.5, 5, 5, 5, 5):setKinematic(true)  -- back wall
+	world:newBoxCollider( 0, 2.5,-5, 5, 5, 5):setKinematic(true)  -- front wall
 
-	  sphere = world:newSphereCollider(0, 2, -2, 0.10)
-	  sphere:setRestitution(1)
+	sphere = world:newSphereCollider(0, 2, -2, 0.10)
+	sphere:setRestitution(1)
 
-	  hilt = lovr.graphics.newModel("assets/hilt.glb")
-	  droid = lovr.graphics.newModel("assets/droid.glb")
+	hilt = lovr.graphics.newModel("assets/hilt.glb")
 
+	data.droid = droid.new()
+	data.droid:init(shaders.standard_shader)	
 end
 
 function lovr.update(dt)
 	world:update(dt)
+	data.droid:update(dt, mat4(lovr.headset.getPosition()))
 
 	for i, hand in ipairs(lovr.headset.getHands()) do
     	if lovr.headset.wasPressed(hand, 'trigger') then
@@ -98,7 +64,6 @@ local draw_sabre = function (pos, colour, device)
 		end
 	)
 
-
 	local m1 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -0.5)
 
 	lovr.graphics.setColor(colour)
@@ -111,7 +76,6 @@ local draw_sabre = function (pos, colour, device)
 	hilt:draw(pos*m2:scale(0.04))
 
 	lovr.graphics.setShader()
-
 
 --	lovr.graphics.setColor(0x777777)
 --	lovr.graphics.cylinder((pos*m2):scale(0.14), 0.015, 0.015, true)
@@ -131,7 +95,7 @@ end
 
 function lovr.draw()
 	-- draw floor grid -- 
-	lovr.graphics.setShader(shader)
+	lovr.graphics.setShader(shaders.grid_shader)
 	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
 	lovr.graphics.setShader()
 
@@ -141,15 +105,10 @@ function lovr.draw()
 		draw_sabre(pos, saber_colours[i], hand)
 	end
 
-	--lovr.graphics.setColor(0x00ffff)	
-	--lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
+	lovr.graphics.setColor(0x00ffff)	
+	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
 
-	lovr.graphics.setShader(shader2)
-	lovr.graphics.setColor(0x909090)
-	droid:draw(mat4(sphere:getPose()):scale(0.25))
-
-	lovr.graphics.setShader()
-
+	data.droid:draw(mat4(sphere:getPose()))
 
 	draw_axis(vec3(0,0,0))
 
