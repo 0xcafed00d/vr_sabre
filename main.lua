@@ -1,10 +1,13 @@
 
 local droid = require "droid"
+local sabre = require "sabre"
 local shaders = require "shaders"
 
 local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 
 local data = {
+	sabres = {}
+
 }
 
 function lovr.conf(t)
@@ -36,6 +39,11 @@ function lovr.load()
 
 	data.droid = droid.new()
 	data.droid:init(shaders.lit_shader)	
+
+	for i, hand in ipairs(lovr.headset.getHands()) do
+		data.sabres[i] = sabre.new()
+		data.sabres[i]:init(shaders.lit_shader, shaders.unlit_shader, saber_colours[i])	
+	end
 end
 
 function lovr.update(dt)
@@ -49,9 +57,8 @@ function lovr.update(dt)
 	data.droid:update(dt, mat4(lovr.headset.getPosition()))
 
 	for i, hand in ipairs(lovr.headset.getHands()) do
-    	if lovr.headset.wasPressed(hand, 'trigger') then
-      		local position = vec3(lovr.headset.getPosition(hand))
-    	end
+      	local pos = mat4(lovr.headset.getPose(hand))
+		data.sabres[i]:update(dt, pos)
   	end
 end
 
@@ -138,8 +145,7 @@ function lovr.draw()
 
 	-- draw sabres -- 
 	for i, hand in ipairs(lovr.headset.getHands()) do
-		local pos = mat4(lovr.headset.getPose(hand))
-		draw_sabre(pos, saber_colours[i], hand)
+		data.sabres[i]:draw()
 	end
 	
 end

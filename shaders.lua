@@ -74,15 +74,18 @@ local shaders = {
 	unlit_shader = lovr.graphics.newShader(
 		[[
 			out vec3 Normal;
+			out vec3 FragmentPos;
 
 			vec4 position(mat4 projection, mat4 transform, vec4 vertex)
 			{
 				Normal = lovrNormal;
+				FragmentPos = (lovrModel * vertex).xyz;
 				return projection * transform * vertex;
 			}
 		]],
 		[[
 			in vec3 Normal;
+			in vec3 FragmentPos;
 
 			vec4 color(vec4 graphicsColor, sampler2D image, vec2 uv) 
 			{
