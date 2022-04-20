@@ -7,7 +7,7 @@ function sabre.new()
 end
 
 function sabre:init(index)
-	if sabre.hilt_model != nil then
+	if sabre.hilt_model == nil then
 		sabre.hilt_model = lovr.graphics.newModel("assets/hilt.glb")
 	end
 end

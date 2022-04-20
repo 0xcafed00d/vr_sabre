@@ -1,4 +1,4 @@
-local utils = require "utils"
+
 local droid = require "droid"
 local shaders = require "shaders"
 
@@ -7,11 +7,16 @@ local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 local data = {
 }
 
-function lovr.load()
+function lovr.conf(t)
+	t.modules.headset = false	
+end
 
-	shaders.standard_shader:send('lovrLightDirection', { -1, -1, -1 })
-	shaders.standard_shader:send('lovrLightColor', { .9, .9, .8, 1.0 })
-	shaders.standard_shader:send('lovrExposure', 10)
+function lovr.load()
+    shaders.standard_shader:send('liteColor', {1.0, 1.0, 1.0, 1.0})
+    shaders.standard_shader:send('ambience', {0.5, 0.5, 0.5, 1.0})
+    shaders.standard_shader:send('specularStrength', 1.0)
+    shaders.standard_shader:send('metallic', 64.0)
+	shaders.standard_shader:send('lightPos', {0.0, 5.0, 0.0})
 
 	lovr.graphics.setBackgroundColor(.05, .05, .05)
 
@@ -34,6 +39,12 @@ function lovr.load()
 end
 
 function lovr.update(dt)
+	-- Adjust head position (for specular)
+	if lovr.headset then 
+		hx, hy, hz = lovr.headset.getPosition()
+		shaders.standard_shader:send('viewPos', { hx, hy, hz } )
+	end
+
 	world:update(dt)
 	data.droid:update(dt, mat4(lovr.headset.getPosition()))
 
@@ -66,13 +77,14 @@ local draw_sabre = function (pos, colour, device)
 
 	local m1 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -0.5)
 
+	lovr.graphics.setShader(shaders.unlit_shader)
 	lovr.graphics.setColor(colour)
-	lovr.graphics.cylinder(pos*m1, 0.01, 0.01, true)
+	lovr.graphics.cylinder(pos*m1, 0.04, 0.04, true)
 
 	local m2 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, -0.02, 0.15)
 
 	lovr.graphics.setColor(0xffffff)
-	lovr.graphics.setShader(shader2)
+	lovr.graphics.setShader(shaders.standard_shader)
 	hilt:draw(pos*m2:scale(0.04))
 
 	lovr.graphics.setShader()
@@ -99,11 +111,6 @@ function lovr.draw()
 	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
 	lovr.graphics.setShader()
 
-	-- draw sabres -- 
-	for i, hand in ipairs(lovr.headset.getHands()) do
-		local pos = mat4(lovr.headset.getPose(hand))
-		draw_sabre(pos, saber_colours[i], hand)
-	end
 
 	lovr.graphics.setColor(0x00ffff)	
 	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
@@ -128,4 +135,11 @@ function lovr.draw()
 			end
 		end
 	end
+
+	-- draw sabres -- 
+	for i, hand in ipairs(lovr.headset.getHands()) do
+		local pos = mat4(lovr.headset.getPose(hand))
+		draw_sabre(pos, saber_colours[i], hand)
+	end
+	
 end
