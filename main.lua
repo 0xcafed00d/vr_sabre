@@ -12,11 +12,11 @@ function lovr.conf(t)
 end
 
 function lovr.load()
-    shaders.standard_shader:send('liteColor', {1.0, 1.0, 1.0, 1.0})
-    shaders.standard_shader:send('ambience', {0.5, 0.5, 0.5, 1.0})
-    shaders.standard_shader:send('specularStrength', 1.0)
-    shaders.standard_shader:send('metallic', 64.0)
-	shaders.standard_shader:send('lightPos', {0.0, 5.0, 0.0})
+    shaders.lit_shader:send('liteColor', {1.0, 1.0, 1.0, 1.0})
+    shaders.lit_shader:send('ambience', {0.5, 0.5, 0.5, 1.0})
+    shaders.lit_shader:send('specularStrength', 1.0)
+    shaders.lit_shader:send('metallic', 64.0)
+	shaders.lit_shader:send('lightPos', {0.0, 5.0, 0.0})
 
 	lovr.graphics.setBackgroundColor(.05, .05, .05)
 
@@ -35,14 +35,14 @@ function lovr.load()
 	hilt = lovr.graphics.newModel("assets/hilt.glb")
 
 	data.droid = droid.new()
-	data.droid:init(shaders.standard_shader)	
+	data.droid:init(shaders.lit_shader)	
 end
 
 function lovr.update(dt)
 	-- Adjust head position (for specular)
 	if lovr.headset then 
 		hx, hy, hz = lovr.headset.getPosition()
-		shaders.standard_shader:send('viewPos', { hx, hy, hz } )
+		shaders.lit_shader:send('viewPos', { hx, hy, hz } )
 	end
 
 	world:update(dt)
@@ -84,7 +84,7 @@ local draw_sabre = function (pos, colour, device)
 	local m2 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, -0.02, 0.15)
 
 	lovr.graphics.setColor(0xffffff)
-	lovr.graphics.setShader(shaders.standard_shader)
+	lovr.graphics.setShader(shaders.lit_shader)
 	hilt:draw(pos*m2:scale(0.04))
 
 	lovr.graphics.setShader()

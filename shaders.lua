@@ -25,7 +25,7 @@ local shaders = {
 	]], { flags = { highp = true } }),
 	
 
-	standard_shader = lovr.graphics.newShader(
+	lit_shader = lovr.graphics.newShader(
 		[[
 			out vec3 FragmentPos;
 			out vec3 Normal;
@@ -71,7 +71,7 @@ local shaders = {
 			}
 		]], {}),
 
-		unlit_shader = lovr.graphics.newShader(
+	unlit_shader = lovr.graphics.newShader(
 		[[
 			out vec3 Normal;
 
