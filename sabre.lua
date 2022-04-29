@@ -1,6 +1,5 @@
 local utils = require "utils"
 local sabre = {
-	saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 }
 
 function sabre.new() 
@@ -9,6 +8,7 @@ function sabre.new()
 	i.blade_start = lovr.math.newVec3()
 	i.blade_end = lovr.math.newVec3()
 	i.blade_pose = lovr.math.newMat4()
+	i.active = false
 	return i
 end
 
@@ -23,20 +23,35 @@ function sabre:init(hilt_shader, blade_shader, colour)
 end
 
 function sabre:update(dt, hand_pose_mat4)
-	self.blade_pose.set(hand_pose_mat4*mat4():rotate(math.pi/4, 1, 0, 0))
+	self.blade_pose:set(hand_pose_mat4*mat4():rotate(math.pi/4, 1, 0, 0))
+
+	local v1 = vec3(hand_pose_mat4*mat4():rotate(math.pi/4, 1, 0, 0))
+	local v2 = vec3(hand_pose_mat4*mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -1))
+
+	self.blade_start:set(v1);
+	self.blade_end:set(v2);
 	
-	self.blade_start.set(vec3(self.blade_pose));
-	self.blade_end.set(vec3(self.blade_pose:translate(0, 0, -1)))	
+	self.active = true	
 end
 
 function sabre:draw() 
-	local m1 = self.blade_pose:translate(0, 0, -0.5)
+	if self.active == true then 
 
-	lovr.graphics.setShader(sabre.blade_shader)
-	lovr.graphics.setColor(self.colour)
-	lovr.graphics.cylinder(m1, 0.01, 0.01, true)
-	lovr.graphics.setShader()
+		if self.debug then 
+			draw_marker(self.blade_start, 0xff00ff)
+			draw_marker(self.blade_end, 0xff00ff)
+		end
+			
+		local m1 = mat4(self.blade_pose):translate(0, 0, -0.5)
+		lovr.graphics.setShader(sabre.blade_shader)
+		lovr.graphics.setColor(self.colour)
+		lovr.graphics.cylinder(m1, 0.01, 0.01, true)
 
+		lovr.graphics.setShader(self.hilt_shader)
+		lovr.graphics.setColor(0xffffff)
+		sabre.hilt_model:draw(self.blade_pose:translate(0, -0.02, 0.15):scale(0.04))	
+		lovr.graphics.setShader()
+	end
 end
 
 return sabre

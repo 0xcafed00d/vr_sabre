@@ -11,11 +11,13 @@ local data = {
 }
 
 function lovr.conf(t)
-	t.modules.headset = false	
 end
 
 function lovr.load()
-    shaders.lit_shader:send('liteColor', {1.0, 1.0, 1.0, 1.0})
+	print("ENTER: lovr.load")
+
+
+	shaders.lit_shader:send('liteColor', {1.0, 1.0, 1.0, 1.0})
     shaders.lit_shader:send('ambience', {0.5, 0.5, 0.5, 1.0})
     shaders.lit_shader:send('specularStrength', 1.0)
     shaders.lit_shader:send('metallic', 64.0)
@@ -37,16 +39,34 @@ function lovr.load()
 
 	hilt = lovr.graphics.newModel("assets/hilt.glb")
 
+	-- create driod
 	data.droid = droid.new()
 	data.droid:init(shaders.lit_shader)	
 
+	
+	-- create 2 sabres 
+	local sl = sabre.new()
+	sl:init(shaders.lit_shader, shaders.unlit_shader, saber_colours[1])	
+	local sr = sabre.new()
+	sr:init(shaders.lit_shader, shaders.unlit_shader, saber_colours[2])	
+
+	data.sabres["hand/left"] = sl
+	data.sabres["hand/right"] = sr
+
+	print("LEAVE: lovr.load")
+end
+
+local frame = 0;
+
+local function update_hands(dt)
 	for i, hand in ipairs(lovr.headset.getHands()) do
-		data.sabres[i] = sabre.new()
-		data.sabres[i]:init(shaders.lit_shader, shaders.unlit_shader, saber_colours[i])	
-	end
+      	local pos = mat4(lovr.headset.getPose(hand))
+		data.sabres[hand]:update(dt, pos)
+  	end
 end
 
 function lovr.update(dt)
+
 	-- Adjust head position (for specular)
 	if lovr.headset then 
 		hx, hy, hz = lovr.headset.getPosition()
@@ -56,13 +76,10 @@ function lovr.update(dt)
 	world:update(dt)
 	data.droid:update(dt, mat4(lovr.headset.getPosition()))
 
-	for i, hand in ipairs(lovr.headset.getHands()) do
-      	local pos = mat4(lovr.headset.getPose(hand))
-		data.sabres[i]:update(dt, pos)
-  	end
+	update_hands(dt)
 end
 
-local draw_marker = function (pos_vec3, colour)	
+draw_marker = function (pos_vec3, colour)	
 	lovr.graphics.setColor(colour)
 	lovr.graphics.sphere(pos_vec3, 0.02);
 end
@@ -71,8 +88,6 @@ local draw_sabre = function (pos, colour, device)
 	
 	local v1 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0))
 	local v2 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -1))
-	draw_marker(v1, 0xff00ff)
-	draw_marker(v2, 0xffff00)
 
 	world:raycast(v1, v2, 
 		function(shape, x, y, z, nx, ny, nz)
@@ -82,22 +97,6 @@ local draw_sabre = function (pos, colour, device)
 		end
 	)
 
-	local m1 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -0.5)
-
-	lovr.graphics.setShader(shaders.unlit_shader)
-	lovr.graphics.setColor(colour)
-	lovr.graphics.cylinder(pos*m1, 0.04, 0.04, true)
-
-	local m2 = mat4():rotate(math.pi/4, 1, 0, 0):translate(0, -0.02, 0.15)
-
-	lovr.graphics.setColor(0xffffff)
-	lovr.graphics.setShader(shaders.lit_shader)
-	hilt:draw(pos*m2:scale(0.04))
-
-	lovr.graphics.setShader()
-
---	lovr.graphics.setColor(0x777777)
---	lovr.graphics.cylinder((pos*m2):scale(0.14), 0.015, 0.015, true)
 end
 
 local draw_axis = function (pos)
@@ -118,13 +117,12 @@ function lovr.draw()
 	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
 	lovr.graphics.setShader()
 
+	draw_axis(vec3(0,0,0))
 
 	lovr.graphics.setColor(0x00ffff)	
 	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
 
 	data.droid:draw(mat4(sphere:getPose()))
-
-	draw_axis(vec3(0,0,0))
 
 	-- draw room bounding box -- 
 	lovr.graphics.setColor(0xffffff)	
@@ -143,9 +141,9 @@ function lovr.draw()
 		end
 	end
 
-	-- draw sabres -- 
-	for i, hand in ipairs(lovr.headset.getHands()) do
-		data.sabres[i]:draw()
+	for k, sabre in pairs(data.sabres) do
+		sabre:draw()
 	end
-	
+
+	frame = frame + 1
 end
