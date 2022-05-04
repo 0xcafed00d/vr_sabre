@@ -2,6 +2,7 @@
 local droid = require "droid"
 local sabre = require "sabre"
 local shaders = require "shaders"
+local flux = require "flux"
 
 local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
 
@@ -14,11 +15,9 @@ function lovr.conf(t)
 end
 
 function lovr.load()
-	print("ENTER: lovr.load")
 
-
-	shaders.lit_shader:send('liteColor', {1.0, 1.0, 1.0, 1.0})
-    shaders.lit_shader:send('ambience', {0.5, 0.5, 0.5, 1.0})
+	shaders.lit_shader:send('liteColor', {0.9, 0.9, 0.9, 1.0})
+    shaders.lit_shader:send('ambience', {0.02, 0.02, 0.02, 1.0})
     shaders.lit_shader:send('specularStrength', 1.0)
     shaders.lit_shader:send('metallic', 64.0)
 	shaders.lit_shader:send('lightPos', {0.0, 5.0, 0.0})
@@ -37,8 +36,6 @@ function lovr.load()
 	sphere = world:newSphereCollider(0, 2, -2, 0.10)
 	sphere:setRestitution(1)
 
-	hilt = lovr.graphics.newModel("assets/hilt.glb")
-
 	-- create driod
 	data.droid = droid.new()
 	data.droid:init(shaders.lit_shader)	
@@ -52,8 +49,6 @@ function lovr.load()
 
 	data.sabres["hand/left"] = sl
 	data.sabres["hand/right"] = sr
-
-	print("LEAVE: lovr.load")
 end
 
 local frame = 0;
@@ -69,7 +64,7 @@ function lovr.update(dt)
 
 	-- Adjust head position (for specular)
 	if lovr.headset then 
-		hx, hy, hz = lovr.headset.getPosition()
+		local hx, hy, hz = lovr.headset.getPosition()
 		shaders.lit_shader:send('viewPos', { hx, hy, hz } )
 	end
 

@@ -31,15 +31,13 @@ local shaders = {
 			out vec3 Normal;
 	
 			vec4 position(mat4 projection, mat4 transform, vec4 vertex) { 
-				Normal = lovrNormal;
+				Normal =  vec3(transform * vec4(lovrNormal, 0.0));
 				FragmentPos = (lovrModel * vertex).xyz;
-			
 				return projection * transform * vertex;
 			}
 		]],
 		[[
 			uniform vec4 liteColor;
-	
 			uniform vec4 ambience;
 		
 			in vec3 Normal;
@@ -64,10 +62,10 @@ local shaders = {
 				float spec = pow(max(dot(viewDir, reflectDir), 0.0), metallic);
 				vec4 specular = specularStrength * spec * liteColor;
 				
-				vec4 baseColor = graphicsColor * texture(image, uv) * lovrDiffuseColor;         
+				vec4 baseColor = texture(image, uv) * lovrDiffuseColor;         
 				//vec4 objectColor = baseColor * vertexColor;
 	
-				return baseColor * (ambience + diffuse + specular);
+				return baseColor * (ambience + diffuse + specular);				
 			}
 		]], {}),
 
