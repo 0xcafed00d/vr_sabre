@@ -87,8 +87,7 @@ local shaders = {
 
 			vec4 color(vec4 graphicsColor, sampler2D image, vec2 uv) 
 			{
-				return vec4(Normal, 0.5);
-				//return graphicsColor * lovrDiffuseColor * vertexColor * texture(image, uv);
+				return graphicsColor * lovrDiffuseColor * vertexColor * texture(image, uv);
 			}
 		]],{})
 }

@@ -4,7 +4,7 @@ local sabre = require "sabre"
 local shaders = require "shaders"
 local flux = require "flux"
 
-local saber_colours = {0x00ff00, 0x0000ff, 0xff0000}
+local saber_colours = {0x7fff7f, 0x7f7fff, 0xff0000}
 
 local data = {
 	sabres = {}
@@ -15,6 +15,8 @@ function lovr.conf(t)
 end
 
 function lovr.load()
+	lovr.graphics.setCullingEnabled(true)
+
 
 	shaders.lit_shader:send('liteColor', {0.9, 0.9, 0.9, 1.0})
     shaders.lit_shader:send('ambience', {0.02, 0.02, 0.02, 1.0})
@@ -96,11 +98,11 @@ end
 
 local draw_axis = function (pos)
 	lovr.graphics.setColor(0xff0000)	
-	lovr.graphics.box("fill", 0.5, 0, 0, 1, 0.05, 0.05, 0, 0, 1, 0)
+	lovr.graphics.box("fill", 0.5, 0, 0, 1, 0.01, 0.01, 0, 0, 1, 0)
 	lovr.graphics.setColor(0x00ff00)	
-	lovr.graphics.box("fill", 0, 0.5, 0, 0.05, 1, 0.05, 0, 0, 1, 0)
+	lovr.graphics.box("fill", 0, 0.5, 0, 0.01, 1, 0.01, 0, 0, 1, 0)
 	lovr.graphics.setColor(0x0000ff)	
-	lovr.graphics.box("fill", 0, 0, 0.5, 0.05, 0.05, 1, 0, 0, 1, 0)
+	lovr.graphics.box("fill", 0, 0, 0.5, 0.01, 0.01, 1, 0, 0, 1, 0)
 	lovr.graphics.setColor(0xffffff)	
 	lovr.graphics.cube("fill", 0, 0, 0, 0.1, 0, 0, 1, 0)
 end	
