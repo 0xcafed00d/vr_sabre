@@ -1,4 +1,6 @@
 local utils = require "utils"
+local shaders = require "shaders"
+
 local sabre = {
 	debug = false,
 }
@@ -12,10 +14,9 @@ function sabre.new()
 	return i
 end
 
-function sabre:init(hilt_shader, blade_shader, colour)
-	self.hilt_shader = hilt_shader
-	self.blade_shader = blade_shader
+function sabre:init(glowColor_vec3, colour)
 	self.colour = colour
+	self.glowColor = glowColor_vec3
 
 	if self.hilt_model == nil then
 		self.hilt_model = lovr.graphics.newModel("assets/hilt.glb")
@@ -55,24 +56,26 @@ function sabre:draw()
 		local m1 = mat4(self.blade_pose):translate(0, 0, -0.5) -- blade pos
 
 		-- draw hilt
-		lovr.graphics.setShader(self.hilt_shader)
+		lovr.graphics.setShader(shaders.lit_shader)
 		lovr.graphics.setColor(0xffffff)
 		self.hilt_model:draw(self.blade_pose:translate(0, -0.02, 0.14):scale(0.04))	
 
 		-- draw blade core 
-		lovr.graphics.setShader(self.blade_shader)
+		lovr.graphics.setShader(shaders.unlit_shader)
 		lovr.graphics.setColor(self.colour)
 		lovr.graphics.sphere(self.blade_end, 0.01)
 		lovr.graphics.cylinder(m1, 0.01, 0.01, true)
 
 		-- draw blade glow 
+		lovr.graphics.setShader(shaders.glow_shader)
+
+		shaders.glow_shader:send('glowColor', self.glowColor)
+		shaders.glow_shader:send('pos', self.blade_start)
+
 		lovr.graphics.setBlendMode("add", "alphamultiply")
 		lovr.graphics.cylinder(m1, 0.02, 0.02, true)
 		lovr.graphics.sphere(self.blade_end, 0.019)
 		lovr.graphics.setBlendMode("alpha", "alphamultiply")
-
-
---		lovr.graphics.line(self.last_blade_start.xyz, self.last_blade_end.xyz)
 
 		lovr.graphics.setShader()
 	end

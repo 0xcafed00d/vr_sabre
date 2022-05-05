@@ -4,11 +4,10 @@ local sabre = require "sabre"
 local shaders = require "shaders"
 local flux = require "flux"
 
-local saber_colours = {0x7fff7f, 0x7f7fff, 0xff0000}
+local saber_colours = {0xffffff, 0xffffff, 0x00ff00, 0x0000ff, 0xff0000}
 
 local data = {
 	sabres = {}
-
 }
 
 function lovr.conf(t)
@@ -45,9 +44,9 @@ function lovr.load()
 	
 	-- create 2 sabres 
 	local sl = sabre.new()
-	sl:init(shaders.lit_shader, shaders.unlit_shader, saber_colours[1])	
+	sl:init(lovr.math.newVec3(0.0, 1.0, 0.0), saber_colours[1])	
 	local sr = sabre.new()
-	sr:init(shaders.lit_shader, shaders.unlit_shader, saber_colours[2])	
+	sr:init(lovr.math.newVec3(0.0, 0.0, 1.0), saber_colours[2])	
 
 	data.sabres["hand/left"] = sl
 	data.sabres["hand/right"] = sr
@@ -68,6 +67,7 @@ function lovr.update(dt)
 	if lovr.headset then 
 		local hx, hy, hz = lovr.headset.getPosition()
 		shaders.lit_shader:send('viewPos', { hx, hy, hz } )
+		shaders.glow_shader:send('viewPos', { hx, hy, hz } )
 	end
 
 	world:update(dt)
