@@ -84,30 +84,29 @@ local shaders = {
 		]],{}),
 
 		glow_shader = lovr.graphics.newShader(
-			[[
-				out vec3 Normal;
-		
-				vec4 position(mat4 projection, mat4 transform, vec4 vertex) 
-				{ 
-					Normal = normalize(lovrNormalMatrix * lovrNormal);
-					return projection * transform * vertex;
-				}
-			]],
-			[[			
-				in vec3 Normal;		
-				uniform vec3 pos;		
-				uniform vec3 glowColor;		
-				uniform vec3 viewPos;
-				
-				vec4 color(vec4 graphicsColor, sampler2D image, vec2 uv) 
-				{    
-					vec3 viewDir = normalize(viewPos - pos);
-					vec3 norm = normalize(Normal);
-					float x = max(dot(norm, viewDir), 0.0);
-					return vec4(glowColor*x*x*x, 1.0);				
-				}
-			]], {}),
+		[[
+			out vec3 Normal;
 	
+			vec4 position(mat4 projection, mat4 transform, vec4 vertex) 
+			{ 
+				Normal = normalize(lovrNormalMatrix * lovrNormal);
+				return projection * transform * vertex;
+			}
+		]],
+		[[			
+			in vec3 Normal;		
+			uniform vec3 pos;		
+			uniform vec3 glowColor;		
+			uniform vec3 viewPos;
+			
+			vec4 color(vec4 graphicsColor, sampler2D image, vec2 uv) 
+			{    
+				vec3 viewDir = normalize(viewPos - pos);
+				vec3 norm = normalize(Normal);
+				float x = max(dot(norm, viewDir), 0.0);
+				return vec4(glowColor*x*x*x, 1.0);				
+			}
+		]], {}),	
 }
 
 return shaders

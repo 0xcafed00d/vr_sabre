@@ -16,7 +16,6 @@ end
 function lovr.load()
 	lovr.graphics.setCullingEnabled(true)
 
-
 	shaders.lit_shader:send('liteColor', {0.9, 0.9, 0.9, 1.0})
     shaders.lit_shader:send('ambience', {0.02, 0.02, 0.02, 1.0})
     shaders.lit_shader:send('specularStrength', 1.0)
