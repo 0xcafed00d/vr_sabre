@@ -31,7 +31,7 @@ local shaders = {
 			out vec3 Normal;
 	
 			vec4 position(mat4 projection, mat4 transform, vec4 vertex) { 
-				Normal =  vec3(transform * vec4(lovrNormal, 0.0));
+				Normal = normalize(lovrNormalMatrix * lovrNormal);
 				FragmentPos = (lovrModel * vertex).xyz;
 				return projection * transform * vertex;
 			}
@@ -71,20 +71,12 @@ local shaders = {
 
 	unlit_shader = lovr.graphics.newShader(
 		[[
-			out vec3 Normal;
-			out vec3 FragmentPos;
-
 			vec4 position(mat4 projection, mat4 transform, vec4 vertex)
 			{
-				Normal = lovrNormal;
-				FragmentPos = (lovrModel * vertex).xyz;
 				return projection * transform * vertex;
 			}
 		]],
 		[[
-			in vec3 Normal;
-			in vec3 FragmentPos;
-
 			vec4 color(vec4 graphicsColor, sampler2D image, vec2 uv) 
 			{
 				return graphicsColor * lovrDiffuseColor * vertexColor * texture(image, uv);
@@ -94,12 +86,10 @@ local shaders = {
 		glow_shader = lovr.graphics.newShader(
 			[[
 				out vec3 Normal;
-				//out vec3 FragmentPos;
 		
 				vec4 position(mat4 projection, mat4 transform, vec4 vertex) 
 				{ 
-					Normal = vec3(transform * vec4(lovrNormal, 0.0));
-				//	FragmentPos = (lovrModel * vertex).xyz;
+					Normal = normalize(lovrNormalMatrix * lovrNormal);
 					return projection * transform * vertex;
 				}
 			]],
@@ -113,8 +103,7 @@ local shaders = {
 				{    
 					vec3 viewDir = normalize(viewPos - pos);
 					vec3 norm = normalize(Normal);
-					float x = max(dot(norm, viewDir) - 0.05, 0.0);
-
+					float x = max(dot(norm, viewDir), 0.0);
 					return vec4(glowColor*x*x*x, 1.0);				
 				}
 			]], {}),

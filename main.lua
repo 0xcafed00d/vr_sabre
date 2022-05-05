@@ -116,6 +116,8 @@ function lovr.draw()
 
 	draw_axis(vec3(0,0,0))
 
+	draw_marker(vec3(0.0, 5.0, 0.0), 0xffff00)
+
 	lovr.graphics.setColor(0x00ffff)	
 	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
 
