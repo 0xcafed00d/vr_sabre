@@ -12,11 +12,11 @@
 
 :models
 
-[name:;collection:Vehicles;type:tank_turretBlock;position:(0.2000, 0.0200, 0.6500);rotation:(0.0000, 0.0000, 270.0000);scale:(0.5500, 0.5000, 0.7000);group:Group_0;locked:False;hidden:False;materials:metalGreen+metal;]
-[name:;collection:Vehicles;type:tank_turretBarrelLarge;position:(0.2000, 0.0200, 1.3500);rotation:(0.0000, 0.0000, 270.0000);scale:(0.5500, 0.5000, 0.7000);group:Group_0;locked:False;hidden:False;materials:metal+metalGreen+dark;]
-[name:;collection:Vehicles;type:tank_turretBarrelLarge;position:(-0.2000, 0.0200, 1.3500);rotation:(0.0000, 0.0000, 90.0000);scale:(-0.5500, 0.5000, 0.7000);group:Group_1;locked:False;hidden:False;materials:metal+metalGreen+dark;]
-[name:;collection:Vehicles;type:tank_turretBlock;position:(-0.2000, 0.0200, 0.6500);rotation:(0.0000, 0.0000, 90.0000);scale:(-0.5500, 0.5000, 0.7000);group:Group_1;locked:False;hidden:False;materials:metalGreen+metal;]
-[name:;collection:Blasters;type:attachment_barrel;position:(0.0000, 0.0000, 1.0000);rotation:(270.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:_defaultMat+metalDark+dark;]
-[name:;collection:Greebles;type:detail_panelsB;position:(0.0000, 0.0000, 1.0000);rotation:(89.9802, 0.0000, 0.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:_defaultMat;]
-[name:;collection:Greebles;type:detail_ventStretched;position:(0.0500, 0.4400, 0.8700);rotation:(0.0000, 270.0000, 270.0000);scale:(1.0000, 3.7950, 1.0000);group:;locked:False;hidden:False;materials:_defaultMat+dark;]
-[name:;collection:Ships;type:mast_bottomDetailed;position:(-0.0678, 0.4200, 0.6005);rotation:(0.0000, 0.0000, 0.0000);scale:(0.3376, 0.4900, 0.3213);group:;locked:False;hidden:False;materials:wood+metalLight;]
+[name:;collection:Ships;type:mast_bottomDetailed;position:(-0.0678, 0.1125, -0.2745);rotation:(0.0000, 0.0000, 0.0000);scale:(0.3376, 0.4900, 0.3213);group:;locked:False;hidden:False;materials:wood+metalLight;]
+[name:;collection:Vehicles;type:tank_turretBarrelLarge;position:(0.2120, -0.1975, 0.3686);rotation:(0.0000, 0.0000, 270.0000);scale:(0.4455, 0.4050, 0.5670);group:Group_0;locked:False;hidden:False;materials:metal+metalGreen+dark;]
+[name:;collection:Vehicles;type:tank_turretBlock;position:(0.2120, -0.1975, -0.1985);rotation:(0.0000, 0.0000, 270.0000);scale:(0.4455, 0.4050, 0.5670);group:Group_0;locked:False;hidden:False;materials:metalGreen+metal;]
+[name:;collection:Greebles;type:detail_panelsB;position:(0.0100, -0.1674, 0.0350);rotation:(89.9802, 0.0000, 0.0000);scale:(1.0000, 2.3940, 1.0004);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Greebles;type:detail_ventStretched;position:(0.0500, 0.1425, -0.0350);rotation:(0.0000, 270.0000, 270.0000);scale:(1.0000, 3.7950, 1.0000);group:;locked:False;hidden:False;materials:_defaultMat+dark;]
+[name:;collection:Vehicles;type:detail_tank;position:(-0.2250, -0.2025, -0.1800);rotation:(0.0000, 0.0000, 270.0000);scale:(1.0000, 1.0000, 1.0000);group:;locked:False;hidden:False;materials:metal+dark;]
+[name:;collection:Vehicles;type:tank_turretBarrelLarge;position:(-0.2120, -0.1975, 0.3686);rotation:(0.0000, 0.0000, 90.0000);scale:(-0.4455, 0.4050, 0.5670);group:Group_1;locked:False;hidden:False;materials:metal+metalGreen+dark;]
+[name:;collection:Vehicles;type:tank_turretBlock;position:(-0.2120, -0.1975, -0.1985);rotation:(0.0000, 0.0000, 90.0000);scale:(-0.4455, 0.4050, 0.5670);group:Group_1;locked:False;hidden:False;materials:metalGreen+metal;]

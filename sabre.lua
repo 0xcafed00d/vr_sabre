@@ -58,13 +58,13 @@ function sabre:draw()
 		-- draw hilt
 		lovr.graphics.setShader(shaders.lit_shader)
 		lovr.graphics.setColor(0xffffff)
-		self.hilt_model:draw(self.blade_pose:translate(0, -0.02, 0.14):scale(0.04))	
+		self.hilt_model:draw(self.blade_pose:translate(0, 0, 0.09):scale(0.04))	
 
 		-- draw blade core 
 		lovr.graphics.setShader(shaders.unlit_shader)
 		lovr.graphics.setColor(self.colour)
 		lovr.graphics.sphere(self.blade_end, 0.01)
-		lovr.graphics.cylinder(m1, 0.01, 0.01, true)
+		lovr.graphics.cylinder(m1, 0.01, 0.01, false)
 
 		-- draw blade glow 
 		lovr.graphics.setShader(shaders.glow_shader)

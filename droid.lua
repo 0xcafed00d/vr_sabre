@@ -1,5 +1,7 @@
 local utils = require "utils"
 local shaders = require "shaders"
+local flux = require "flux"
+
 
 local droid = {
 	debug = true

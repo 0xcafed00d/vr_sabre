@@ -22,6 +22,7 @@ function lovr.load()
 		front  = 'assets/yokahama/negz.jpg'
 	})
 
+
 	lovr.graphics.setCullingEnabled(true)
 
 	shaders.lit_shader:send('liteColor', {0.9, 0.9, 0.9, 1.0})
@@ -31,6 +32,18 @@ function lovr.load()
 	shaders.lit_shader:send('lightPos', {0.0, 5.0, 0.0})
 
 	lovr.graphics.setBackgroundColor(.05, .05, .05)
+
+	world = lovr.physics.newWorld(0,-1,0)
+	world:newBoxCollider(0, -2.5, 0, 5, 5, 5):setKinematic(true) -- floor
+	world:newBoxCollider(0, 7.5, 0, 5, 5, 5):setKinematic(true) -- roof
+
+	world:newBoxCollider( 5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- right wall
+	world:newBoxCollider(-5, 2.5, 0, 5, 5, 5):setKinematic(true)  -- left wall
+	world:newBoxCollider( 0, 2.5, 5, 5, 5, 5):setKinematic(true)  -- back wall
+	world:newBoxCollider( 0, 2.5,-5, 5, 5, 5):setKinematic(true)  -- front wall
+
+	sphere = world:newSphereCollider(0, 2, -2, 0.10)
+	sphere:setRestitution(1)
 
 	-- create driod
 	data.droid = droid.new()
@@ -65,13 +78,30 @@ function lovr.update(dt)
 		shaders.glow_shader:send('viewPos', { hx, hy, hz } )
 	end
 
+	world:update(dt)
 	data.droid:update(dt, mat4(lovr.headset.getPosition()))
+
 	update_hands(dt)
 end
 
 draw_marker = function (pos_vec3, colour)	
 	lovr.graphics.setColor(colour)
 	lovr.graphics.sphere(pos_vec3, 0.02);
+end
+
+local draw_sabre = function (pos, colour, device)	
+	
+	local v1 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0))
+	local v2 = vec3(pos*mat4():rotate(math.pi/4, 1, 0, 0):translate(0, 0, -1))
+
+	world:raycast(v1, v2, 
+		function(shape, x, y, z, nx, ny, nz)
+			draw_marker(vec3(x, y, z), 0xff0000)
+			shape:getCollider():applyForce(-nx, -ny, -nz)
+			lovr.headset.vibrate(device, 1, 0.25, 0)
+		end
+	)
+
 end
 
 local draw_axis = function (pos)
@@ -85,6 +115,7 @@ local draw_axis = function (pos)
 	lovr.graphics.cube("fill", 0, 0, 0, 0.1, 0, 0, 1, 0)
 end	
 
+
 function lovr.draw()
 	lovr.graphics.setColor(0xffffff)	
 	lovr.graphics.skybox(skybox)
@@ -94,13 +125,35 @@ function lovr.draw()
 	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
 	lovr.graphics.setShader()
 
-	--draw_axis(vec3(0,0,0))
+	draw_axis(vec3(0,0,0))
 
 	draw_marker(vec3(0.0, 5.0, 0.0), 0xffff00)
 
-	--data.droid:draw(mat4(sphere:getPose()))
+	lovr.graphics.setColor(0x00ffff)	
+	lovr.graphics.sphere(mat4(sphere:getPose()):scale(0.1));
+
+	data.droid:draw(mat4(sphere:getPose()))
+
+	-- draw room bounding box -- 
+	lovr.graphics.setColor(0xffffff)	
+	lovr.graphics.cube("line", 0, 2.51, 0, 5, 0, 0, 1, 0)
+
+	lovr.graphics.setColor(0xff0000)	
+
+	for i, collider in ipairs(world:getColliders()) do
+	    local x,y,z, angle, ax,ay,az = collider:getPose()
+		for _, shape in ipairs(collider:getShapes()) do
+			local shapeType = shape:getType()
+			if shapeType == 'box' then
+				local sx, sy, sz = shape:getDimensions()
+				lovr.graphics.box('line', x,y,z, sx,sy,sz, angle, ax,ay,az)
+			end
+		end
+	end
 
 	for k, sabre in pairs(data.sabres) do
 		sabre:draw()
 	end
+
+	frame = frame + 1
 end
