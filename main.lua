@@ -2,6 +2,7 @@
 local droid = require "droid"
 local sabre = require "sabre"
 local shaders = require "shaders"
+local temple = require "temple"
 
 local saber_colours = {0xffffff, 0xffffff, 0x00ff00, 0x0000ff, 0xff0000}
 
@@ -45,6 +46,9 @@ function lovr.load()
 
 	data.sabres["hand/left"] = sl
 	data.sabres["hand/right"] = sr
+
+	data.temple = temple.new()
+	data.temple:init()
 end
 
 local frame = 0;
@@ -88,10 +92,12 @@ end
 function lovr.draw()
 	lovr.graphics.setColor(0xffffff)	
 	lovr.graphics.skybox(skybox)
+
+	data.temple:draw()
 	
 	-- draw floor grid -- 
 	lovr.graphics.setShader(shaders.grid_shader)
-	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
+--	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
 	lovr.graphics.setShader()
 
 	--draw_axis(vec3(0,0,0))
