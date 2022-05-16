@@ -57,15 +57,15 @@ local shaders = {
 				vec4 diffuse = diff * liteColor;
 				
 				//specular
-				vec3 viewDir = normalize(viewPos - FragmentPos);
-				vec3 reflectDir = reflect(-lightDir, norm);
-				float spec = pow(max(dot(viewDir, reflectDir), 0.0), metallic);
-				vec4 specular = specularStrength * spec * liteColor;
+				//vec3 viewDir = normalize(viewPos - FragmentPos);
+				//vec3 reflectDir = reflect(-lightDir, norm);
+				//float spec = pow(max(dot(viewDir, reflectDir), 0.0), metallic);
+				//vec4 specular = specularStrength * spec * liteColor;
 				
 				vec4 baseColor = texture(image, uv) * lovrDiffuseColor;         
 				//vec4 objectColor = baseColor * vertexColor;
 	
-				return baseColor * (ambience + diffuse + specular);				
+				return baseColor * (ambience + diffuse /*+ specular*/);				
 			}
 		]], {}),
 

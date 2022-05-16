@@ -2,7 +2,7 @@ local utils = require "utils"
 local shaders = require "shaders"
 
 local sabre = {
-	debug = true,
+	debug = false,
 }
 
 function sabre.new() 
