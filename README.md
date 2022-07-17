@@ -12,7 +12,7 @@ adb push --sync . /sdcard/Android/data/org.lovr.app/files
 ##Video Previews: 
 
 initial version:
-https://youtube.com/shorts/Po-xWN7YQTA
+https://youtube.com/watch?v=Po-xWN7YQTA
 
 curent version:
-https://youtube.com/shorts/k2XCLwA9zok
+https://youtube.com/watch?v=k2XCLwA9zok
