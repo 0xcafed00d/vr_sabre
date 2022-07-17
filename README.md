@@ -9,6 +9,10 @@ or copy files to Headset that has the LOVR.apk installed using the android debug
 adb push --sync . /sdcard/Android/data/org.lovr.app/files
 
 
+##Video Previews: 
 
+initial version:
+https://youtube.com/shorts/Po-xWN7YQTA
 
-https://youtube.com/shorts/k2XCLwA9zok?feature=share
+curent version:
+https://youtube.com/shorts/k2XCLwA9zok
