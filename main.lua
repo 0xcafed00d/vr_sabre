@@ -119,5 +119,5 @@ function lovr.draw()
 		sabre:draw()
 	end
 
-	lovr.graphics.print(fps, 1, 1, -3)
+	--lovr.graphics.print(fps, 1, 1, -3)
 end
